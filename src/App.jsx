@@ -27,12 +27,18 @@ function filterdProducts(productList, userFilter, categoiesFilters) {
     });
   }
 
+  if (categoiesFilters.length > 0) {
+    filtered = filtered.filter(product => {
+      return categoiesFilters.includes(product.categoryId);
+    });
+  }
+
   return filtered;
 }
 
 export const App = () => {
   const [userFilter, setUserFilter] = useState('');
-  const [categoriesFilters, setCategoriesFilter] = useState('');
+  const [categoriesFilters, setCategoriesFilter] = useState([]);
 
   const preparedProducts = filterdProducts(
     products,
@@ -102,8 +108,12 @@ export const App = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
-                className="button is-success mr-6 is-outlined"
-                onClick={() => setCategoriesFilter('')}
+                className={cn(
+                  { 'is-outlined': categoriesFilters.length > 0 },
+                  'button',
+                  'is-succes',
+                  'mr-6',
+                )}
               >
                 All
               </a>
@@ -112,11 +122,25 @@ export const App = () => {
                 return (
                   <a
                     data-cy="Category"
-                    className="button mr-2 my-1 is-info"
+                    className={cn(
+                      { 'is-info': categoriesFilters.includes(category.id) },
+                      'button',
+                      'mr-2',
+                      'my-1',
+                    )}
                     href="#/"
-                    onClick={() =>
-                      setCategoriesFilter([...categoriesFilters, category.id])
-                    }
+                    onClick={() => {
+                      if (categoriesFilters.includes(category.id)) {
+                        setCategoriesFilter(
+                          categoriesFilters.filter(id => id !== category.id),
+                        );
+                      } else {
+                        setCategoriesFilter([
+                          ...categoriesFilters,
+                          category.id,
+                        ]);
+                      }
+                    }}
                     key={category.id}
                   >
                     {category.title}
