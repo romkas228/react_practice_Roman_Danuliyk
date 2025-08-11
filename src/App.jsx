@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React, { useState } from 'react';
 import cn from 'classnames';
@@ -47,6 +48,35 @@ function filterdProducts(
   }
 
   return filtered;
+}
+
+// eslint-disable-next-line no-unused-vars
+function sortProducts(prods, sortField, isReversed) {
+  const sorted = [...prods];
+
+  switch (sortField) {
+    case 'id':
+      sorted.sort((productA, productB) => productA.id > productB.id);
+      break;
+    case 'Category':
+      sorted.sort((productA, productB) => {
+        return productA.category.title.localeCompare(productB.category.title);
+      });
+      break;
+    case 'User':
+      sorted.sort((productA, productB) => {
+        return productA.user.name.localeCompare(productB.user.name);
+      });
+      break;
+    default:
+      return sorted;
+  }
+
+  if (isReversed) {
+    sorted.reverse();
+  }
+
+  return sorted;
 }
 
 export const App = () => {
@@ -204,7 +234,7 @@ export const App = () => {
                   <th>
                     <span className="is-flex is-flex-wrap-nowrap">
                       ID
-                      <a href="#/">
+                      <a href="#/" onClick={() => setSortField('id')}>
                         <span className="icon">
                           <i data-cy="SortIcon" className="fas fa-sort" />
                         </span>
@@ -215,7 +245,7 @@ export const App = () => {
                   <th>
                     <span className="is-flex is-flex-wrap-nowrap">
                       Product
-                      <a href="#/">
+                      <a href="#/" onClick={() => setSortField('product')}>
                         <span className="icon">
                           <i data-cy="SortIcon" className="fas fa-sort-down" />
                         </span>
@@ -226,7 +256,7 @@ export const App = () => {
                   <th>
                     <span className="is-flex is-flex-wrap-nowrap">
                       Category
-                      <a href="#/">
+                      <a href="#/" onClick={() => setSortField('Category')}>
                         <span className="icon">
                           <i data-cy="SortIcon" className="fas fa-sort-up" />
                         </span>
@@ -237,7 +267,7 @@ export const App = () => {
                   <th>
                     <span className="is-flex is-flex-wrap-nowrap">
                       User
-                      <a href="#/">
+                      <a href="#/" onClick={() => setSortField('User')}>
                         <span className="icon">
                           <i data-cy="SortIcon" className="fas fa-sort" />
                         </span>
@@ -252,7 +282,7 @@ export const App = () => {
                   return (
                     <tr data-cy="Product" key={product.id}>
                       <td className="has-text-weight-bold" data-cy="ProductId">
-                        1
+                        {product.id}
                       </td>
 
                       <td data-cy="ProductName">{product.name}</td>
