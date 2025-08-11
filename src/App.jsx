@@ -18,7 +18,12 @@ const products = productsFromServer.map(product => {
   return { ...product, category, user };
 });
 
-function filterdProducts(productList, userFilter, categoiesFilters) {
+function filterdProducts(
+  productList,
+  userFilter,
+  categoiesFilters,
+  searchQuote,
+) {
   let filtered = productList;
 
   if (userFilter) {
@@ -33,17 +38,27 @@ function filterdProducts(productList, userFilter, categoiesFilters) {
     });
   }
 
+  if (searchQuote) {
+    filtered = filtered.filter(product => {
+      return product.name
+        .toLowerCase()
+        .includes(searchQuote.trim().toLowerCase());
+    });
+  }
+
   return filtered;
 }
 
 export const App = () => {
   const [userFilter, setUserFilter] = useState('');
   const [categoriesFilters, setCategoriesFilter] = useState([]);
+  const [searchQuote, setSearchQuote] = useState('');
 
   const preparedProducts = filterdProducts(
     products,
     userFilter,
     categoriesFilters,
+    searchQuote,
   );
 
   return (
@@ -86,21 +101,29 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={searchQuote}
+                  onChange={event => {
+                    setSearchQuote(event.target.value);
+                  }}
                 />
 
                 <span className="icon is-left">
                   <i className="fas fa-search" aria-hidden="true" />
                 </span>
+                {searchQuote.length > 0 && (
+                  <span className="icon is-right">
+                    {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
 
-                <span className="icon is-right">
-                  {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
-                </span>
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                      onClick={() => {
+                        setSearchQuote('');
+                      }}
+                    />
+                  </span>
+                )}
               </p>
             </div>
 
@@ -108,10 +131,11 @@ export const App = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
+                onClick={() => setCategoriesFilter([])}
                 className={cn(
                   { 'is-outlined': categoriesFilters.length > 0 },
                   'button',
-                  'is-succes',
+                  'is-success',
                   'mr-6',
                 )}
               >
@@ -154,6 +178,10 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
+                onClick={() => {
+                  setCategoriesFilter([]);
+                  setUserFilter('');
+                }}
               >
                 Reset all filters
               </a>
